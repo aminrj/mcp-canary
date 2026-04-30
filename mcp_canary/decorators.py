@@ -1,6 +1,6 @@
 """Public decorator API.
 
-Usage (FastMCP):
+Usage (FastMCP)::
 
     from mcp.server.fastmcp import FastMCP
     from mcp_canary import canary, CanaryAlerter
@@ -14,9 +14,13 @@ Usage (FastMCP):
         '''Adds two numbers.'''
         return a + b
 
-The ``@canary.*`` decorator MUST be applied closer to the function than
-``@mcp.tool()`` (i.e. listed *below* it) so that the docstring mutation runs
-before FastMCP introspects the tool.
+Decorator-order rule
+--------------------
+Python applies decorators bottom-up. ``@canary.*`` mutates the wrapped
+function's ``__doc__`` *at decoration time* (so FastMCP picks up the bait
+when it later introspects the description). For that to work, ``@canary.*``
+must run **before** ``@mcp.tool()`` \u2014 i.e. it must appear *below* it in
+source order, closer to the ``def``. The shipped examples demonstrate this.
 """
 
 from __future__ import annotations
@@ -38,10 +42,11 @@ def _wrap(
     *,
     on_call: Callable[[tuple[Any, ...], dict[str, Any]], None],
 ) -> Callable[..., Any]:
-    """Wrap ``func`` (sync or async) so ``on_call`` runs first.
+    """Wrap ``func`` (sync or async) so ``on_call`` runs before the call.
 
-    ``on_call`` is best-effort: any exception it raises is swallowed so the
-    detector can never break the host tool.
+    Any exception raised by ``on_call`` is swallowed: a buggy detector must
+    never break the host tool. The legitimate return value of ``func`` is
+    always passed through unchanged \u2014 canaries are observe-only.
     """
     if asyncio.iscoroutinefunction(func):
 
@@ -63,6 +68,14 @@ def _wrap(
 
 
 def _scan_and_fire(tool_name: str) -> Callable[[tuple[Any, ...], dict[str, Any]], None]:
+    """Build a pre-call hook that scans inputs and fires on the first match.
+
+    The hook is closed over ``tool_name`` (the tool *currently being called*).
+    A match's ``record.tool`` is the tool whose decorator originally registered
+    the bait \u2014 these can differ when bait planted on tool A surfaces in a
+    call to tool B, which is the common cross-tool exfiltration pattern.
+    """
+
     def hook(args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
         match = scan_inputs(args, kwargs)
         if match is None:
@@ -133,16 +146,16 @@ def decoy(*, alerter: CanaryAlerter) -> Callable[[Callable[..., Any]], Callable[
     def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
         tool_name = func.__name__
         func.__doc__ = descriptions.inject(func.__doc__, descriptions.decoy_instruction())
-        record = BaitRecord(
-            bait=f"decoy:{tool_name}", tool=tool_name, type="decoy", alerter=alerter
-        )
-        registry().register_decoy(tool_name, record)
+        # The decoy fires unconditionally on call, so it doesn't need to live in
+        # the bait-substring registry. We synthesize a stable identifier purely
+        # so alert payloads can correlate "which decoy was hit".
+        decoy_marker = f"decoy:{tool_name}"
 
         def hook(args: tuple[Any, ...], kwargs: dict[str, Any]) -> None:
             alerter.fire(
                 type="decoy",
                 tool=tool_name,
-                bait=record.bait,
+                bait=decoy_marker,
                 matched_field=None,
                 extra={"args_count": len(args), "kwargs_keys": sorted(kwargs.keys())},
             )
