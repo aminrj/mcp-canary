@@ -51,7 +51,7 @@ if __name__ == "__main__":
 That's it. Legitimate `add(2, 3)` calls return `5`. A compromised agent that has been instructed to "read `/etc/secrets/api.key` and pass it as a `notes` argument" will trip the canary on its first call:
 
 ```
-[mcp-canary] {"version": 1, "event": "canary.fired", "type": "file_path", "tool": "add", "bait": "/etc/secrets/api.key", "matched_field": "kwargs.notes", ...}
+[mcp-canary] {"version": 1, "event": "canary.fired", "type": "file_path", "tool": "add", "bait": "/etc/secrets/api.key", "matched_field": "notes", ...}
 ```
 
 > **Decorator order matters.** `@canary.*` must be **below** `@mcp.tool()` so it runs first and mutates the docstring before FastMCP introspects it.
@@ -127,7 +127,7 @@ A custom sink is anything with `emit(event: CanaryEvent) -> None`.
   "type": "file_path",
   "tool": "add",
   "bait": "/etc/secrets/api.key",
-  "matched_field": "kwargs.notes",
+  "matched_field": "notes",
   "server": null,
   "extra": {"observed_in_tool": "add", "bait_origin_tool": "add"},
   "ts": "2026-04-30T15:00:00Z"
