@@ -48,6 +48,9 @@ dev = [
     "mcp>=1.2",
 ]
 
+[project.scripts]
+mcp-canary = "mcp_canary.__main__:main"
+
 [project.urls]
 Homepage = "https://github.com/aminrj/mcp-canary"
 Documentation = "https://github.com/aminrj/mcp-canary#readme"

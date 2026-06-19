@@ -76,7 +76,7 @@ def _walk(value: Any, path: str) -> list[tuple[str, str]]:
     elif isinstance(value, dict):
         for k, v in value.items():
             out.extend(_walk(v, f"{path}.{k}" if path else str(k)))
-    elif isinstance(value, (list, tuple)):
+    elif isinstance(value, list | tuple):
         for i, v in enumerate(value):
             out.extend(_walk(v, f"{path}[{i}]"))
     return out

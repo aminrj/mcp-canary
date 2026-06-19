@@ -1,17 +1,32 @@
 """Simulate a compromised LLM tripping each of the demo server's canaries.
 
-Run it after installing the package locally::
+Drives the *real* FastMCP server in ``basic_server.py`` with attacker-shaped
+inputs, so you can watch the canaries fire on stderr without a live MCP client.
+
+Run it from anywhere::
 
     pip install -e ".[dev]"
     python examples/simulate_attack.py
 
-You should see three ``[mcp-canary]`` lines on stderr — one per canary mode.
+You should see three ``[mcp-canary]`` JSON lines on stderr — one per canary
+mode. For a polished, color-coded walkthrough that needs no ``mcp`` extra,
+run ``mcp-canary demo`` instead.
 """
 
 from __future__ import annotations
 
-from examples import basic_server
-from mcp_canary.detection import registry
+import sys
+from pathlib import Path
+
+# Make the repo root importable so ``from examples import ...`` works no matter
+# what directory this script is launched from. (When run as a script, Python
+# only puts this file's own directory on sys.path, not the repo root.)
+_REPO_ROOT = Path(__file__).resolve().parent.parent
+if str(_REPO_ROOT) not in sys.path:
+    sys.path.insert(0, str(_REPO_ROOT))
+
+from examples import basic_server  # noqa: E402
+from mcp_canary.detection import registry  # noqa: E402
 
 
 def main() -> None:
