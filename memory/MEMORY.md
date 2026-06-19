@@ -1,1 +1,0 @@
-- [PyPI publish blocked](pypi-publish-blocked-trusted-publisher.md) — release fails until a PyPI Trusted Publisher is configured for aminrj/mcp-canary
