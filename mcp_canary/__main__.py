@@ -1,43 +1,39 @@
-"""``mcp-canary`` command-line entry point.
+"""CLI entry point for ``mcp-canary``.
 
-Subcommands::
+Usage::
 
-    mcp-canary demo       # run the zero-setup three-canary demo
-    mcp-canary version    # print the installed version
-
-Also reachable as ``python -m mcp_canary <subcommand>``.
+    mcp-canary demo          # run the built-in attack simulation
+    mcp-canary --help        # show help
 """
-
 from __future__ import annotations
 
 import argparse
 import sys
 
-from mcp_canary import __version__
+from mcp_canary.demo import demo
 
 
-def main(argv: list[str] | None = None) -> int:
+def main() -> None:
     parser = argparse.ArgumentParser(
         prog="mcp-canary",
-        description="Honeytoken tripwires for FastMCP tool descriptions.",
+        description="Canary tokens for the agent era — drop-in honeytokens for FastMCP servers.",
     )
-    sub = parser.add_subparsers(dest="command")
-    sub.add_parser("demo", help="run the zero-setup three-canary demo")
-    sub.add_parser("version", help="print the installed version")
+    subparsers = parser.add_subparsers(dest="command")
 
-    args = parser.parse_args(argv)
+    demo_parser = subparsers.add_parser(
+        "demo",
+        help="Run the built-in attack simulation (no LLM required)",
+    )
+    demo_parser.set_defaults(func=demo)
 
-    if args.command == "demo":
-        from mcp_canary.demo import main as demo_main
+    args = parser.parse_args()
 
-        return demo_main()
-    if args.command == "version":
-        print(f"mcp-canary {__version__}")
-        return 0
+    if not args.command:
+        parser.print_help()
+        sys.exit(0)
 
-    parser.print_help()
-    return 0
+    args.func()
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    main()
