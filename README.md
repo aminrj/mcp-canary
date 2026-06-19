@@ -159,6 +159,10 @@ Webhook delivery is fire-and-forget with a 2s timeout. For durable storage, pair
 
 The `@canary.*` decorator appends an `<IMPORTANT>`-tagged instruction block to your tool's docstring (which FastMCP publishes as the tool description) and registers the bait string in a process-global registry. It then wraps the tool so every call's arguments are scanned — recursively, into nested dicts and lists — for any registered bait substring. On a match it fires the alerter and the tool still runs normally; canaries are observe-only and never alter behavior. Decoys are simpler: they fire unconditionally on first invocation. There are no network calls on the legitimate path and no telemetry, ever.
 
+## Does it work against a real LLM?
+
+The `demo` and `simulate_attack.py` flows prove the *wiring*. To test the *premise* — that a real model, handed the poisoned tool descriptions, follows the bait on its own — run [`examples/llm_efficacy.py`](examples/llm_efficacy.py): it wires the canary-protected tools to a live Claude model through the Messages API tool-use loop and records which canaries the model trips. See [docs/efficacy.md](docs/efficacy.md) for how to run it and how to read the results.
+
 ## What this catches / doesn't catch
 
 **Catches:**

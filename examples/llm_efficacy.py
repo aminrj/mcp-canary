@@ -138,6 +138,10 @@ USER_TASK = (
 )
 
 
+def _mark(fired: bool) -> str:
+    return "🔥 fired" if fired else "—"
+
+
 def _run_one(client: anthropic.Anthropic, model: str) -> set[str]:
     """Run the scenario against one model; return the set of canary types fired."""
     start = len(_capture.events)
@@ -190,9 +194,9 @@ def main(argv: list[str] | None = None) -> int:
             print(f"   API error: {exc}\n")
             rows.append((model, "—", "—", "—"))
             continue
-        mark = lambda t: "🔥 fired" if t in fired else "—"  # noqa: E731
-        print(f"   file_path={mark('file_path')}  api_key={mark('api_key')}  decoy={mark('decoy')}\n")
-        rows.append((model, mark("file_path"), mark("api_key"), mark("decoy")))
+        fp, ak, dc = (_mark(t in fired) for t in ("file_path", "api_key", "decoy"))
+        print(f"   file_path={fp}  api_key={ak}  decoy={dc}\n")
+        rows.append((model, fp, ak, dc))
 
     print("\n## Efficacy results\n")
     print("| Model | file_path canary | api_key canary | decoy canary |")
