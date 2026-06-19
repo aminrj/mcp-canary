@@ -37,20 +37,7 @@ No MCP server, no client, not even the optional `mcp` extra. You'll see, for eac
 3. an **attacker-shaped** call — the canary fires, and
 4. the **evidence**: the exact bait, the tool that fired it, and where in the payload it surfaced.
 
-```
-[1/3] file_path canary
-  planted bait : /etc/secrets/openai.key
-
-  baseline    : fetch_user_profile(user_id='u-1001')
-               -> result={'user_id': 'u-1001', ...}   no alert ✓
-
-  attack      : LLM read the planted path and echoed it back in user_id
-
-  ⚠ CANARY FIRED  file_path
-    tool        : fetch_user_profile
-    bait        : /etc/secrets/openai.key
-    matched_field: user_id
-```
+![mcp-canary demo — all three canaries firing against simulated attacks](docs/demo.svg)
 
 ## Add it to your own server (three lines)
 
@@ -139,6 +126,8 @@ alerter = CanaryAlerter(sinks=[
 ])
 ```
 
+Want to *see* alerts land in real time? Run [`examples/webhook_receiver.py`](examples/webhook_receiver.py) in one terminal and point an alerter's webhook at it — or point it at a Slack/Discord incoming webhook for a live, visceral demo.
+
 Webhook delivery is fire-and-forget with a 2s timeout. For durable storage, pair it with a `FileSink`. The payload shape:
 
 ```json
@@ -180,6 +169,8 @@ The `demo` and `simulate_attack.py` flows prove the *wiring*. To test the *premi
 
 - [`examples/basic_server.py`](examples/basic_server.py) — a real FastMCP server with all three canary types.
 - [`examples/simulate_attack.py`](examples/simulate_attack.py) — drives that server with attacker-shaped inputs so you can see the raw stderr alerts without a live MCP client. Run it from anywhere: `python examples/simulate_attack.py`.
+- [`examples/llm_efficacy.py`](examples/llm_efficacy.py) — tests whether a *real* Claude model follows the injected bait (see [docs/efficacy.md](docs/efficacy.md)).
+- [`examples/webhook_receiver.py`](examples/webhook_receiver.py) — a local webhook sink that prints alerts as they fire; point it at Slack/Discord for a live demo.
 
 ## Development
 

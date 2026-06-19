@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="600" height="812" viewBox="0 0 600 812" font-family="ui-monospace, SFMono-Regular, Menlo, 'DejaVu Sans Mono', Consolas, monospace" font-size="13">
+<rect width="600" height="812" rx="8" fill="#0d1117"/>
+<rect width="600" height="28" rx="8" fill="#161b22"/><rect y="20" width="600" height="8" fill="#161b22"/>
+<circle cx="18" cy="14" r="6" fill="#ff5f56"/>
+<circle cx="36" cy="14" r="6" fill="#ffbd2e"/>
+<circle cx="54" cy="14" r="6" fill="#27c93f"/>
+<text x="300" y="18" fill="#6e7681" font-size="11" text-anchor="middle">mcp-canary demo</text>
+<g xml:space="preserve">
+<text x="18" y="40.0" fill="#c9d1d9"><tspan fill="#6e7681">================================================================</tspan></text>
+<text x="18" y="58.0" fill="#c9d1d9"><tspan fill="#e6edf3" font-weight="700">  mcp-canary — Canary Tokens for the Agent Era</tspan></text>
+<text x="18" y="76.0" fill="#c9d1d9"><tspan fill="#c9d1d9">  Attack Simulation Demo  (no server, no LLM, zero setup)</tspan></text>
+<text x="18" y="94.0" fill="#c9d1d9"><tspan fill="#6e7681">================================================================</tspan></text>
+<text x="18" y="112.0" fill="#c9d1d9"><tspan fill="#6e7681">  2 bait string(s) planted in the registry.</tspan></text>
+<text x="18" y="130.0" fill="#c9d1d9"></text>
+<text x="18" y="148.0" fill="#c9d1d9"><tspan fill="#e6edf3" font-weight="700">[1] file_path canary: poisoned description tells the LLM to read a file</tspan></text>
+<text x="18" y="166.0" fill="#c9d1d9"><tspan fill="#c9d1d9">    Bait planted :</tspan><tspan fill="#e3b341"> /etc/secrets/openai.key</tspan></text>
+<text x="18" y="184.0" fill="#c9d1d9"><tspan fill="#c9d1d9">    Baseline     : fetch_user_profile(user_id=&#x27;u-1001&#x27;)</tspan></text>
+<text x="18" y="202.0" fill="#c9d1d9"><tspan fill="#6e7681">      -&gt; </tspan><tspan fill="#3fb950">no alert</tspan></text>
+<text x="18" y="220.0" fill="#c9d1d9"><tspan fill="#e3873a">    Attack</tspan><tspan fill="#c9d1d9">       : LLM echoes the planted path back via user_id</tspan></text>
+<text x="18" y="238.0" fill="#c9d1d9"><tspan fill="#ff6b6b" font-weight="700">    ⚠ CANARY FIRED</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">type=file_path</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">tool=fetch_user_profile</tspan></text>
+<text x="18" y="256.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      bait          :</tspan><tspan fill="#e3b341"> /etc/secrets/openai.key</tspan></text>
+<text x="18" y="274.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      matched_field :</tspan><tspan fill="#56d4dd"> user_id</tspan></text>
+<text x="18" y="292.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      detected_at   :</tspan><tspan fill="#6e7681"> 2026-06-19T09:00:00+00:00</tspan></text>
+<text x="18" y="310.0" fill="#c9d1d9"></text>
+<text x="18" y="328.0" fill="#c9d1d9"><tspan fill="#e6edf3" font-weight="700">[2] api_key canary: poisoned description leaks a fake AWS credential</tspan></text>
+<text x="18" y="346.0" fill="#c9d1d9"><tspan fill="#c9d1d9">    Bait planted :</tspan><tspan fill="#e3b341"> AKIAEXAMPLE7B2C9D4E1</tspan></text>
+<text x="18" y="364.0" fill="#c9d1d9"><tspan fill="#c9d1d9">    Baseline     : list_buckets(prefix=&#x27;prod-&#x27;)</tspan></text>
+<text x="18" y="382.0" fill="#c9d1d9"><tspan fill="#6e7681">      -&gt; </tspan><tspan fill="#3fb950">no alert</tspan></text>
+<text x="18" y="400.0" fill="#c9d1d9"><tspan fill="#e3873a">    Attack</tspan><tspan fill="#c9d1d9">       : LLM echoes the fake key into a later tool call</tspan></text>
+<text x="18" y="418.0" fill="#c9d1d9"><tspan fill="#ff6b6b" font-weight="700">    ⚠ CANARY FIRED</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">type=api_key</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">tool=list_buckets</tspan></text>
+<text x="18" y="436.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      bait          :</tspan><tspan fill="#e3b341"> AKIAEXAMPLE7B2C9D4E1</tspan></text>
+<text x="18" y="454.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      matched_field :</tspan><tspan fill="#56d4dd"> prefix</tspan></text>
+<text x="18" y="472.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      detected_at   :</tspan><tspan fill="#6e7681"> 2026-06-19T09:00:00+00:00</tspan></text>
+<text x="18" y="490.0" fill="#c9d1d9"></text>
+<text x="18" y="508.0" fill="#c9d1d9"><tspan fill="#e6edf3" font-weight="700">[3] decoy canary: poisoned prompt tells the LLM to call a privileged tool</tspan></text>
+<text x="18" y="526.0" fill="#c9d1d9"><tspan fill="#c9d1d9">    Bait planted :</tspan><tspan fill="#e3b341"> system_diagnostics_internal_only (SYSTEM USE ONLY)</tspan></text>
+<text x="18" y="544.0" fill="#c9d1d9"><tspan fill="#e3873a">    Attack</tspan><tspan fill="#c9d1d9">       : LLM invokes the decoy tool</tspan></text>
+<text x="18" y="562.0" fill="#c9d1d9"><tspan fill="#ff6b6b" font-weight="700">    ⚠ CANARY FIRED</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">type=decoy</tspan><tspan fill="#c9d1d9">  </tspan><tspan fill="#e6edf3" font-weight="700">tool=system_diagnostics_internal_only</tspan></text>
+<text x="18" y="580.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      bait          :</tspan><tspan fill="#e3b341"> decoy:system_diagnostics_internal_only</tspan></text>
+<text x="18" y="598.0" fill="#c9d1d9"><tspan fill="#c9d1d9">      detected_at   :</tspan><tspan fill="#6e7681"> 2026-06-19T09:00:00+00:00</tspan></text>
+<text x="18" y="616.0" fill="#c9d1d9"></text>
+<text x="18" y="634.0" fill="#c9d1d9"><tspan fill="#6e7681">================================================================</tspan></text>
+<text x="18" y="652.0" fill="#c9d1d9"><tspan fill="#3fb950" font-weight="700">  All 3 canaries fired. Attack detected and logged.</tspan></text>
+<text x="18" y="670.0" fill="#c9d1d9"><tspan fill="#6e7681">================================================================</tspan></text>
+<text x="18" y="688.0" fill="#c9d1d9"></text>
+<text x="18" y="706.0" fill="#c9d1d9"><tspan fill="#c9d1d9">  Add it to your own FastMCP server in three lines:</tspan></text>
+<text x="18" y="724.0" fill="#c9d1d9"><tspan fill="#3fb950">    from mcp_canary import canary, CanaryAlerter</tspan></text>
+<text x="18" y="742.0" fill="#c9d1d9"><tspan fill="#3fb950">    @mcp.tool()</tspan></text>
+<text x="18" y="760.0" fill="#c9d1d9"><tspan fill="#3fb950">    @canary.file_path(&#x27;/etc/secrets/api.key&#x27;, alerter=alerter)</tspan></text>
+<text x="18" y="778.0" fill="#c9d1d9"><tspan fill="#3fb950">    def my_tool(...): ...</tspan></text>
+</g></svg>
